@@ -119,20 +119,12 @@ export default function App() {
   };
 
   const handleFinalAction = () => {
-    if (!selectedTopic) return;
-
-    const areas = selectedTopic.focusAreas.join(', ');
-    const message = `Привет! Прошёл навигатор, меня беспокоит: ${selectedTopic.title}.\nПриложение выделило зоны внимания: ${areas}.\nХочу разобраться, что можно сделать.`;
-
     if (window.Telegram?.WebApp) {
       window.Telegram.WebApp.openTelegramLink(
-        `https://t.me/${SPECIALIST.username}?text=${encodeURIComponent(message)}`
+        `https://t.me/${SPECIALIST.username}`
       );
     } else {
-      window.open(
-        `https://t.me/${SPECIALIST.username}?text=${encodeURIComponent(message)}`,
-        '_blank'
-      );
+      window.open(`https://t.me/${SPECIALIST.username}`, '_blank');
     }
   };
 
