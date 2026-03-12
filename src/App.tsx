@@ -122,7 +122,8 @@ export default function App() {
   const handleFinalAction = () => {
     if (!selectedTopic) return;
 
-    const message = `Здравствуйте. Я прошёл мини-навигатор.\nМеня беспокоит: ${selectedTopic.title}.\nХочу понять, что можно сделать дальше.`;
+    const areas = selectedTopic.focusAreas.join(', ');
+    const message = `Привет! Прошёл навигатор, меня беспокоит: ${selectedTopic.title}.\nПриложение выделило зоны внимания: ${areas}.\nХочу разобраться, что можно сделать.`;
 
     if (window.Telegram?.WebApp) {
       window.Telegram.WebApp.openTelegramLink(
