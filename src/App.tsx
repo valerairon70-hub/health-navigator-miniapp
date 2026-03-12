@@ -17,7 +17,6 @@ import {
   Droplets,
   Scale,
   Brain,
-  User,
 } from 'lucide-react';
 import { TOPICS, NEXT_STEPS, SPECIALIST, SOCIAL_PROOF, Topic } from './constants';
 
@@ -59,8 +58,8 @@ function SpecialistCard() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-black/5">
-        <div className="w-14 h-14 rounded-full bg-[#5A5A40]/10 flex items-center justify-center shrink-0">
-          <User className="w-7 h-7 text-[#5A5A40]" />
+        <div className="w-14 h-14 rounded-full overflow-hidden shrink-0">
+          <img src={SPECIALIST.photo} alt={SPECIALIST.name} className="w-full h-full object-cover" />
         </div>
         <div className="space-y-0.5">
           <p className="font-medium font-sans">{SPECIALIST.name}</p>

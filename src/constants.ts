@@ -63,8 +63,9 @@ export const NEXT_STEPS = [
 ];
 
 export const SPECIALIST = {
-  name: 'Ваш специалист',
+  name: 'Валерий Созанов',
   role: 'Wellness-консультант',
+  photo: '/specialist.png',
   fact: 'Работает с 200+ клиентами · энергия, сон, гормональный баланс',
   testimonial: '«Я не понимала, почему всегда устаю. После разговора всё встало на место» — Марина, 34 года',
   username: 'valeriisozanov', // КРИТИЧНО: если username изменится в Telegram — все CTA перестанут работать
