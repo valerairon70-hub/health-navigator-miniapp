@@ -16,7 +16,7 @@ npm run dev
 
 Перед запуском создай файл `.env` на основе `.env.example`:
 ```
-GEMINI_API_KEY=your_key_here
+GEMINI_API_KEY=your_key_here  # в текущем UI не используется, зарезервировано на будущее
 APP_URL=http://localhost:3000
 ```
 

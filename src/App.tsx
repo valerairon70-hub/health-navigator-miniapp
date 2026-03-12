@@ -420,7 +420,7 @@ export default function App() {
 
         <footer className="mt-12 pt-6 border-t border-black/5 text-center">
           <p className="text-[10px] font-sans uppercase tracking-[0.2em] opacity-30">
-            Навигатор состояния • 2026
+            Навигатор самочувствия • 2026
           </p>
         </footer>
       </div>

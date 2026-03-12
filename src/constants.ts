@@ -67,8 +67,8 @@ export const SPECIALIST = {
   role: 'Wellness-консультант',
   fact: 'Работает с 200+ клиентами · энергия, сон, гормональный баланс',
   testimonial: '«Я не понимала, почему всегда устаю. После разговора всё встало на место» — Марина, 34 года',
-  username: 'valeriisozanov',
-  slotsLeft: 3, // количество свободных мест на этой неделе
+  username: 'valeriisozanov', // КРИТИЧНО: если username изменится в Telegram — все CTA перестанут работать
+  slotsLeft: 3, // ОБНОВЛЯТЬ ВРУЧНУЮ перед каждым запуском кампании
 };
 
 export const SOCIAL_PROOF = {
