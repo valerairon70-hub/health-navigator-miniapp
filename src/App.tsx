@@ -79,7 +79,6 @@ function SpecialistCard() {
 export default function App() {
   const [screen, setScreen] = useState<Screen>('intro');
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
-  const [selectedStep, setSelectedStep] = useState<string | null>(null);
 
   useEffect(() => {
     if (window.Telegram?.WebApp) {
@@ -95,16 +94,10 @@ export default function App() {
     setScreen('explanation');
   };
 
-  const handleNextStep = (stepId: string) => {
-    setSelectedStep(stepId);
-    setScreen('action');
-  };
-
   const goBack = () => {
     if (screen === 'welcome') setScreen('intro');
     if (screen === 'explanation') setScreen('welcome');
-    if (screen === 'selection') setScreen('explanation');
-    if (screen === 'action') setScreen('selection');
+    if (screen === 'action') setScreen('explanation');
   };
 
   const getTopicIcon = (id: string) => {
@@ -297,7 +290,7 @@ export default function App() {
                     Если хочешь разобраться в этом по-настоящему, а не просто получить пустой совет — жми дальше и выбери то, что тебе больше откликается.
                   </p>
                   <button
-                    onClick={() => setScreen('selection')}
+                    onClick={() => setScreen('action')}
                     className="w-full py-4 bg-white text-[#5A5A40] rounded-2xl font-sans font-bold uppercase tracking-widest text-sm hover:bg-slate-50 transition-colors flex items-center justify-center gap-2"
                   >
                     Продолжить
@@ -307,103 +300,53 @@ export default function App() {
               </motion.div>
             )}
 
-            {/* Screen 3: Next Step Selection */}
-            {screen === 'selection' && (
+            {/* Screen 3: Action — specialist card + format selection */}
+            {screen === 'action' && selectedTopic && (
               <motion.div
-                key="selection"
+                key="action"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
+                className="space-y-6"
               >
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <p className="text-xs font-sans font-bold uppercase tracking-widest opacity-40">
                     Шаг 3 из 3
                   </p>
-                  <h2 className="text-3xl font-light leading-tight">
-                    Как удобнее начать?
+                  <h2 className="text-2xl font-light leading-tight">
+                    Кто будет с тобой работать
                   </h2>
-                  <p className="text-sm font-sans opacity-60">
-                    Выбери формат — без обязательств
-                  </p>
                 </div>
 
-                <div className="space-y-4">
+                <SpecialistCard />
+
+                <div className="space-y-3">
+                  <p className="text-xs font-sans font-bold uppercase tracking-widest opacity-40">
+                    Выбери, как хочешь начать:
+                  </p>
                   {NEXT_STEPS.map((step) => (
                     <button
                       key={step.id}
-                      onClick={() => handleNextStep(step.id)}
-                      className="w-full p-6 bg-white rounded-3xl border border-black/5 shadow-sm hover:shadow-md hover:border-[#5A5A40]/30 transition-all text-left group"
+                      onClick={handleFinalAction}
+                      className="w-full p-4 bg-white rounded-2xl border border-black/5 shadow-sm hover:shadow-md hover:border-[#5A5A40]/30 transition-all text-left group flex items-center gap-4"
                     >
-                      <div className="flex items-start gap-4">
-                        <div className="mt-1 p-2 rounded-xl bg-[#5A5A40]/5 group-hover:bg-[#5A5A40]/10 transition-colors">
-                          {step.id === 'review' && <Search className="w-5 h-5 text-[#5A5A40]" />}
-                          {step.id === 'tracker' && <ClipboardCheck className="w-5 h-5 text-[#5A5A40]" />}
-                          {step.id === 'question' && <MessageCircle className="w-5 h-5 text-[#5A5A40]" />}
-                        </div>
-                        <div className="space-y-1">
-                          <h4 className="text-lg font-medium">{step.title}</h4>
-                          <p className="text-sm font-sans opacity-60 leading-snug">
-                            {step.description}
-                          </p>
-                        </div>
+                      <div className="p-2 rounded-xl bg-[#5A5A40]/5 group-hover:bg-[#5A5A40]/10 transition-colors shrink-0">
+                        {step.id === 'review' && <Search className="w-5 h-5 text-[#5A5A40]" />}
+                        {step.id === 'tracker' && <ClipboardCheck className="w-5 h-5 text-[#5A5A40]" />}
+                        {step.id === 'question' && <MessageCircle className="w-5 h-5 text-[#5A5A40]" />}
                       </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium font-sans text-sm">{step.title}</p>
+                        <p className="text-xs font-sans opacity-60 leading-snug">{step.description}</p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 opacity-20 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0" />
                     </button>
                   ))}
                 </div>
-              </motion.div>
-            )}
 
-            {/* Screen 4: Action */}
-            {screen === 'action' && selectedStep && selectedTopic && (
-              <motion.div
-                key="action"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="space-y-8"
-              >
-                <div className="text-center space-y-3 py-6">
-                  <div className="w-20 h-20 bg-[#5A5A40]/10 rounded-full flex items-center justify-center mx-auto">
-                    {selectedStep === 'review' && <Search className="w-10 h-10 text-[#5A5A40]" />}
-                    {selectedStep === 'tracker' && <ClipboardCheck className="w-10 h-10 text-[#5A5A40]" />}
-                    {selectedStep === 'question' && <MessageCircle className="w-10 h-10 text-[#5A5A40]" />}
-                  </div>
-                  <h2 className="text-2xl font-light leading-tight">
-                    {selectedStep === 'review' && 'Первичный разбор'}
-                    {selectedStep === 'tracker' && 'Трекер здоровья'}
-                    {selectedStep === 'question' && 'Задать вопрос'}
-                  </h2>
-                  <p className="text-base font-sans opacity-60 max-w-xs mx-auto leading-relaxed">
-                    {selectedStep === 'review' && `Тема: ${selectedTopic.title}. Специалист получит её сразу при открытии чата.`}
-                    {selectedStep === 'tracker' && 'Системный взгляд на показатели организма вместе со специалистом.'}
-                    {selectedStep === 'question' && 'Уточни любые детали, которые тебя беспокоят.'}
-                  </p>
-                </div>
-
-                {/* Карточка специалиста */}
-                <SpecialistCard />
-
-                {/* Срочность */}
-                <div className="flex items-center justify-center gap-2 py-2">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <p className="text-sm font-sans text-emerald-700 font-medium">
-                    Осталось {SPECIALIST.slotsLeft} места на этой неделе
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  <button
-                    onClick={handleFinalAction}
-                    className="w-full py-5 bg-[#5A5A40] text-white rounded-2xl font-sans font-bold text-sm shadow-lg hover:bg-[#4a4a35] transition-all flex items-center justify-center gap-3"
-                  >
-                    <MessageCircle className="w-5 h-5" />
-                    Получить бесплатный разбор
-                  </button>
-                  <p className="text-xs font-sans text-center opacity-40 leading-relaxed px-4">
-                    Без обязательств. Просто разговор со специалистом.
-                  </p>
-                </div>
+                <p className="text-xs font-sans text-center opacity-40 leading-relaxed px-4">
+                  Без обязательств. Просто разговор со специалистом.
+                </p>
               </motion.div>
             )}
 
