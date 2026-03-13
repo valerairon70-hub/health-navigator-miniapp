@@ -7,9 +7,6 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronRight,
-  MessageCircle,
-  ClipboardCheck,
-  Search,
   ArrowLeft,
   Sparkles,
   Zap,
@@ -17,8 +14,11 @@ import {
   Droplets,
   Scale,
   Brain,
+  Search,
+  Share2,
+  CheckCircle2,
 } from 'lucide-react';
-import { TOPICS, NEXT_STEPS, SPECIALIST, SOCIAL_PROOF, Topic } from './constants';
+import { TOPICS, SPECIALIST, SOCIAL_PROOF, OFFER, Topic } from './constants';
 
 declare global {
   interface Window {
@@ -26,16 +26,81 @@ declare global {
   }
 }
 
-type Screen = 'intro' | 'welcome' | 'explanation' | 'selection' | 'action';
+type Screen = 'intro' | 'welcome' | 'explanation' | 'action' | 'thankyou';
 
-// Прогресс-бар: сколько шагов из 3 пройдено
 const SCREEN_STEP: Record<Screen, number> = {
   intro: 0,
   welcome: 1,
   explanation: 2,
-  selection: 3,
   action: 3,
+  thankyou: 0,
 };
+
+function OfferModal({ onClose }: { onClose: () => void }) {
+  const handleAccept = () => {
+    const url = `https://t.me/${SPECIALIST.botUsername}?start=${OFFER.startParam}`;
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.openTelegramLink(url);
+    } else {
+      window.open(url, '_blank');
+    }
+    onClose();
+  };
+
+  return (
+    <motion.div
+      key="offer-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center px-6"
+      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 20 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+        className="bg-[#f5f5f0] rounded-3xl p-6 w-full max-w-sm space-y-5 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="text-center text-5xl">{OFFER.emoji}</div>
+
+        <div className="text-center space-y-2">
+          <h2 className="text-xl font-bold font-sans text-[#1a1a1a]">{OFFER.title}</h2>
+          <p className="text-sm font-sans opacity-60 leading-relaxed">{OFFER.subtitle}</p>
+        </div>
+
+        <div className="space-y-2">
+          {OFFER.bullets.map((bullet, i) => (
+            <div key={i} className="flex items-start gap-2">
+              <div className="w-4 h-4 rounded-full bg-[#5A5A40]/10 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#5A5A40]" />
+              </div>
+              <p className="text-sm font-sans opacity-70 leading-snug">{bullet}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-2 pt-1">
+          <button
+            onClick={handleAccept}
+            className="w-full py-4 bg-[#5A5A40] text-white rounded-2xl font-sans font-bold text-sm shadow-lg hover:bg-[#4a4a35] transition-all"
+          >
+            {OFFER.buttonText}
+          </button>
+          <button
+            onClick={onClose}
+            className="w-full py-2 text-sm font-sans opacity-40 hover:opacity-60 transition-opacity"
+          >
+            {OFFER.skipText}
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 function ProgressBar({ screen }: { screen: Screen }) {
   const step = SCREEN_STEP[screen];
@@ -79,6 +144,7 @@ function SpecialistCard() {
 export default function App() {
   const [screen, setScreen] = useState<Screen>('intro');
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const [showOffer, setShowOffer] = useState(false);
 
   useEffect(() => {
     if (window.Telegram?.WebApp) {
@@ -87,7 +153,18 @@ export default function App() {
       tg.expand();
       tg.setHeaderColor('#f5f5f0');
     }
+    // Показываем оффер один раз — через 1.5 сек после открытия
+    const alreadyShown = localStorage.getItem(OFFER.storageKey);
+    if (!alreadyShown) {
+      const timer = setTimeout(() => setShowOffer(true), 1500);
+      return () => clearTimeout(timer);
+    }
   }, []);
+
+  const handleCloseOffer = () => {
+    localStorage.setItem(OFFER.storageKey, '1');
+    setShowOffer(false);
+  };
 
   const handleTopicSelect = (topic: Topic) => {
     setSelectedTopic(topic);
@@ -119,10 +196,22 @@ export default function App() {
     } else {
       window.open(`https://t.me/${SPECIALIST.username}`, '_blank');
     }
+    setScreen('thankyou');
+  };
+
+  const handleShare = () => {
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.openTelegramLink(
+        `https://t.me/share/url?url=https://t.me/${SPECIALIST.botUsername}&text=${encodeURIComponent(SPECIALIST.shareText)}`
+      );
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#f5f5f0] text-[#1a1a1a] font-serif">
+      <AnimatePresence>
+        {showOffer && <OfferModal onClose={handleCloseOffer} />}
+      </AnimatePresence>
       <div className="max-w-md mx-auto px-6 py-8 flex flex-col min-h-screen">
 
         {/* Header */}
@@ -135,7 +224,7 @@ export default function App() {
               Навигатор
             </h1>
           </div>
-          {screen !== 'intro' && (
+          {(screen === 'welcome' || screen === 'explanation' || screen === 'action') && (
             <button
               onClick={goBack}
               className="p-2 rounded-full hover:bg-black/5 transition-colors"
@@ -161,7 +250,6 @@ export default function App() {
                 className="flex flex-col justify-between h-full space-y-8"
               >
                 <div className="space-y-6 pt-4">
-                  {/* Бесплатно + соцдоказательство */}
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-sans font-bold rounded-full uppercase tracking-wide">
                       Бесплатно
@@ -173,10 +261,10 @@ export default function App() {
 
                   <div className="space-y-3">
                     <h2 className="text-3xl font-light leading-tight">
-                      Почему ты устаёшь, плохо спишь или не можешь сбросить вес — и что за этим стоит
+                      За 2 минуты — узнай главную причину своего симптома и получи первый конкретный шаг
                     </h2>
                     <p className="text-base font-sans opacity-60 leading-relaxed">
-                      Ответь на 3 вопроса и получи бесплатное объяснение своих симптомов от специалиста.
+                      Ответь на 3 вопроса. Специалист объяснит, что происходит, — без воды и медицинских терминов.
                     </p>
                   </div>
 
@@ -184,7 +272,7 @@ export default function App() {
                     {[
                       '3 вопроса — 2 минуты',
                       'Простой язык, без медицинских терминов',
-                      'Реальный специалист, не бот',
+                      'Живой специалист с реальными результатами',
                     ].map((text, i) => (
                       <div key={i} className="flex items-center gap-3">
                         <div className="w-5 h-5 rounded-full bg-[#5A5A40]/10 flex items-center justify-center shrink-0">
@@ -287,7 +375,7 @@ export default function App() {
 
                 <div className="p-6 bg-[#5A5A40] text-white rounded-3xl space-y-4 shadow-xl">
                   <p className="text-base leading-relaxed opacity-90">
-                    Если хочешь разобраться в этом по-настоящему, а не просто получить пустой совет — жми дальше и выбери то, что тебе больше откликается.
+                    Хочешь разобраться по-настоящему — не просто «пей воду и высыпайся»? Специалист посмотрит именно твою ситуацию.
                   </p>
                   <button
                     onClick={() => setScreen('action')}
@@ -300,7 +388,7 @@ export default function App() {
               </motion.div>
             )}
 
-            {/* Screen 3: Action — specialist card + format selection */}
+            {/* Screen 3: Action — specialist card + single CTA */}
             {screen === 'action' && selectedTopic && (
               <motion.div
                 key="action"
@@ -314,39 +402,110 @@ export default function App() {
                     Шаг 3 из 3
                   </p>
                   <h2 className="text-2xl font-light leading-tight">
-                    Кто будет с тобой работать
+                    Кто разберёт твою ситуацию
                   </h2>
                 </div>
 
                 <SpecialistCard />
 
-                <div className="space-y-3">
-                  <p className="text-xs font-sans font-bold uppercase tracking-widest opacity-40">
-                    Выбери, как хочешь начать:
+                {/* Оффер — что именно получит человек */}
+                <div className="p-5 bg-white rounded-2xl border border-black/5 space-y-3">
+                  <p className="text-sm font-sans font-bold text-[#1a1a1a]">
+                    Что будет на бесплатном разборе:
                   </p>
-                  {NEXT_STEPS.map((step) => (
-                    <button
-                      key={step.id}
-                      onClick={handleFinalAction}
-                      className="w-full p-4 bg-white rounded-2xl border border-black/5 shadow-sm hover:shadow-md hover:border-[#5A5A40]/30 transition-all text-left group flex items-center gap-4"
-                    >
-                      <div className="p-2 rounded-xl bg-[#5A5A40]/5 group-hover:bg-[#5A5A40]/10 transition-colors shrink-0">
-                        {step.id === 'review' && <Search className="w-5 h-5 text-[#5A5A40]" />}
-                        {step.id === 'tracker' && <ClipboardCheck className="w-5 h-5 text-[#5A5A40]" />}
-                        {step.id === 'question' && <MessageCircle className="w-5 h-5 text-[#5A5A40]" />}
+                  <div className="space-y-2">
+                    {[
+                      '1 главная причина твоих симптомов',
+                      '2–3 конкретных шага что делать прямо сейчас',
+                      'Ответ на один твой главный вопрос',
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <div className="w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                        </div>
+                        <p className="text-sm font-sans opacity-70">{item}</p>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium font-sans text-sm">{step.title}</p>
-                        <p className="text-xs font-sans opacity-60 leading-snug">{step.description}</p>
-                      </div>
-                      <ChevronRight className="w-4 h-4 opacity-20 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0" />
-                    </button>
-                  ))}
+                    ))}
+                  </div>
+                  {SPECIALIST.slotsLeft > 0 && (
+                    <p className="text-xs font-sans text-amber-700 bg-amber-50 px-3 py-2 rounded-lg font-medium">
+                      Осталось {SPECIALIST.slotsLeft} {SPECIALIST.slotsLeft === 1 ? 'место' : 'места'} на этой неделе
+                    </p>
+                  )}
                 </div>
 
+                <button
+                  onClick={handleFinalAction}
+                  className="w-full py-5 bg-[#5A5A40] text-white rounded-2xl font-sans font-bold text-base shadow-lg hover:bg-[#4a4a35] transition-all flex items-center justify-center gap-2"
+                >
+                  Получить бесплатный разбор
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+
                 <p className="text-xs font-sans text-center opacity-40 leading-relaxed px-4">
-                  Без обязательств. Просто разговор со специалистом.
+                  Без обязательств — просто разговор.
                 </p>
+              </motion.div>
+            )}
+
+            {/* Screen 4: Thank You */}
+            {screen === 'thankyou' && (
+              <motion.div
+                key="thankyou"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center space-y-8 pt-8"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+                >
+                  <CheckCircle2 className="w-20 h-20 text-[#5A5A40]" />
+                </motion.div>
+
+                <div className="text-center space-y-3">
+                  <h2 className="text-3xl font-light leading-tight">
+                    Отлично!
+                  </h2>
+                  <p className="text-base font-sans opacity-60 leading-relaxed">
+                    Валерий получил твой запрос и ответит в Telegram в течение нескольких часов в рабочие дни.
+                  </p>
+                </div>
+
+                <div className="w-full p-5 bg-white rounded-2xl border border-black/5 space-y-3">
+                  <p className="text-sm font-sans font-bold opacity-60 uppercase tracking-widest">
+                    Что будет дальше
+                  </p>
+                  <div className="space-y-3">
+                    {[
+                      { step: '1', text: 'Валерий напишет тебе в Telegram' },
+                      { step: '2', text: 'Коротко расскажешь о своей ситуации' },
+                      { step: '3', text: 'Получишь конкретный разбор и первый шаг' },
+                    ].map((item) => (
+                      <div key={item.step} className="flex items-center gap-3">
+                        <div className="w-6 h-6 rounded-full bg-[#5A5A40] flex items-center justify-center shrink-0">
+                          <span className="text-white text-xs font-sans font-bold">{item.step}</span>
+                        </div>
+                        <p className="text-sm font-sans opacity-70">{item.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="w-full space-y-3">
+                  <p className="text-xs font-sans text-center opacity-50">
+                    Знаешь кого-то, кому это может помочь?
+                  </p>
+                  <button
+                    onClick={handleShare}
+                    className="w-full py-4 bg-white border border-[#5A5A40]/20 text-[#5A5A40] rounded-2xl font-sans font-bold text-sm hover:bg-[#5A5A40]/5 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Поделиться навигатором
+                  </button>
+                </div>
               </motion.div>
             )}
 
