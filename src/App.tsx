@@ -145,6 +145,7 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>('intro');
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [showOffer, setShowOffer] = useState(false);
+  const [userName, setUserName] = useState<string>('');
 
   useEffect(() => {
     if (window.Telegram?.WebApp) {
@@ -152,6 +153,8 @@ export default function App() {
       tg.ready();
       tg.expand();
       tg.setHeaderColor('#f5f5f0');
+      const firstName = tg.initDataUnsafe?.user?.first_name;
+      if (firstName) setUserName(firstName);
     }
     // Показываем оффер один раз — через 1.5 сек после открытия
     const alreadyShown = localStorage.getItem(OFFER.storageKey);
@@ -261,7 +264,7 @@ export default function App() {
 
                   <div className="space-y-3">
                     <h2 className="text-3xl font-light leading-tight">
-                      За 2 минуты — узнай главную причину своего симптома и получи первый конкретный шаг
+                      {userName ? `${userName}, за 2 минуты` : 'За 2 минуты'} — узнай главную причину своего симптома и получи первый конкретный шаг
                     </h2>
                     <p className="text-base font-sans opacity-60 leading-relaxed">
                       Ответь на 3 вопроса. Специалист объяснит, что происходит, — без воды и медицинских терминов.
