@@ -294,7 +294,7 @@ export default function App() {
 
                 <div className="p-6 bg-[#5A5A40] text-white rounded-3xl space-y-4 shadow-xl">
                   <p className="text-base leading-relaxed opacity-90">
-                    Чтобы не гадать по симптомам — важно смотреть на организм системно. Следующий шаг поможет выбрать формат разговора.
+                    Если хочешь разобраться в этом по-настоящему, а не просто получить пустой совет — жми дальше и выбери то, что тебе больше откликается.
                   </p>
                   <button
                     onClick={() => setScreen('selection')}
