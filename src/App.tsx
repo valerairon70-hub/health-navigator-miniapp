@@ -38,7 +38,7 @@ const SCREEN_STEP: Record<Screen, number> = {
 
 function OfferModal({ onClose }: { onClose: () => void }) {
   const handleAccept = () => {
-    const url = `https://t.me/${SPECIALIST.botUsername}?start=${OFFER.startParam}`;
+    const url = `https://t.me/${SPECIALIST.username}`;
     if (window.Telegram?.WebApp) {
       window.Telegram.WebApp.openTelegramLink(url);
     } else {
