@@ -241,12 +241,6 @@ export default function App() {
       const firstName = tg.initDataUnsafe?.user?.first_name;
       if (firstName) setUserName(firstName);
     }
-    // Показываем оффер один раз — через 1.5 сек после открытия
-    const alreadyShown = localStorage.getItem(OFFER.storageKey);
-    if (!alreadyShown) {
-      const timer = setTimeout(() => setShowOffer(true), 1500);
-      return () => clearTimeout(timer);
-    }
   }, []);
 
   const handleCloseOffer = () => {
@@ -257,6 +251,10 @@ export default function App() {
   const handleTopicSelect = (topic: Topic) => {
     setSelectedTopic(topic);
     setScreen('explanation');
+    const alreadyShown = localStorage.getItem(OFFER.storageKey);
+    if (!alreadyShown) {
+      setTimeout(() => setShowOffer(true), 1000);
+    }
   };
 
   const goBack = () => {
@@ -351,9 +349,11 @@ export default function App() {
                     <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-sans font-bold rounded-full uppercase tracking-wide">
                       Бесплатно
                     </span>
-                    <span className="text-xs font-sans opacity-50">
-                      {SOCIAL_PROOF.count} {SOCIAL_PROOF.label}
-                    </span>
+                    {SOCIAL_PROOF.count > 0 && (
+                      <span className="text-xs font-sans opacity-50">
+                        {SOCIAL_PROOF.count} {SOCIAL_PROOF.label}
+                      </span>
+                    )}
                   </div>
 
                   <div className="space-y-3">

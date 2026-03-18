@@ -44,24 +44,6 @@ export const TOPICS: Topic[] = [
   },
 ];
 
-export const NEXT_STEPS = [
-  {
-    id: 'review',
-    title: 'Получить первичный разбор',
-    description: 'Если хотите понять, на что обратить внимание в первую очередь',
-  },
-  {
-    id: 'tracker',
-    title: 'Пройти трекер здоровья',
-    description: 'Если хотите посмотреть состояние системно со специалистом',
-  },
-  {
-    id: 'question',
-    title: 'Написать и задать вопрос',
-    description: 'Если хотите сначала спокойно уточнить детали',
-  },
-];
-
 export const TESTIMONIALS = [
   {
     id: 'sleep',
@@ -109,7 +91,7 @@ export const SPECIALIST = {
 };
 
 export const SOCIAL_PROOF = {
-  count: 340,
+  count: 0, // заменить реальной цифрой когда наберётся 50+
   label: 'человек уже прошли навигатор',
 };
 
