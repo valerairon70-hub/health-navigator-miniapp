@@ -16,7 +16,8 @@ npm run dev
 
 Перед запуском создай файл `.env` на основе `.env.example`:
 ```
-GEMINI_API_KEY=your_key_here  # в текущем UI не используется, зарезервировано на будущее
+TELEGRAM_BOT_TOKEN=...  # хранится в Vercel; в коде фронтенда не используется (SPA без бэкенда)
+GEMINI_API_KEY=...      # зарезервировано на будущее, сейчас не используется
 APP_URL=http://localhost:3000
 ```
 

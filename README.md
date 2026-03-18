@@ -1,20 +1,64 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Навигатор самочувствия
 
-# Run and deploy your AI Studio app
+Telegram Mini App для wellness-консультантов. Помогает человеку за 3 шага понять, что стоит за его симптомами, и мягко подводит к консультации со специалистом.
 
-This contains everything you need to run your app locally.
+**Продакшн:** https://mvpextracted.vercel.app
+**Telegram бот:** @my_health_navigator_bot
 
-View your app in AI Studio: https://ai.studio/apps/4bd0577a-af02-4184-8ff5-3afae7e5d467
+---
 
-## Run Locally
+## Быстрый старт
 
-**Prerequisites:**  Node.js
+```bash
+cd mvp_extracted
+npm install
+cp .env.example .env
+npm run dev
+```
 
+Приложение доступно на http://localhost:3000
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+---
+
+## Структура
+
+```
+src/
+├── App.tsx        # Все экраны и навигация
+├── constants.ts   # Все тексты и данные — менять здесь
+├── main.tsx       # Точка входа
+└── index.css      # Глобальные стили
+```
+
+---
+
+## Переменные окружения
+
+| Переменная | Описание |
+|---|---|
+| `TELEGRAM_BOT_TOKEN` | Токен бота из @BotFather — хранится в Vercel, в коде не используется (фронтенд-приложение) |
+| `GEMINI_API_KEY` | Зарезервировано, пока не используется |
+| `APP_URL` | URL приложения (`http://localhost:3000` локально, `https://mvpextracted.vercel.app` в продакшне) |
+
+---
+
+## Деплой
+
+Пуш в ветку `main` → Vercel деплоит автоматически.
+
+```bash
+git add .
+git commit -m "описание изменений"
+git push origin main
+```
+
+---
+
+## Документация
+
+| Файл | Содержание |
+|------|-----------|
+| `brief.md` | Полное техзадание: экраны, дизайн-система, константы |
+| `PLAN.md` | Roadmap и приоритеты задач |
+| `TESTING.md` | Руководство тестировщика — запуск и все тест-кейсы |
+| `CLAUDE.md` | Правила работы с кодом |
