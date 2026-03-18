@@ -18,7 +18,7 @@ import {
   Share2,
   CheckCircle2,
 } from 'lucide-react';
-import { TOPICS, SPECIALIST, SOCIAL_PROOF, OFFER, Topic } from './constants';
+import { TOPICS, SPECIALIST, SOCIAL_PROOF, OFFER, TESTIMONIALS, Topic } from './constants';
 
 declare global {
   interface Window {
@@ -119,6 +119,50 @@ function ProgressBar({ screen }: { screen: Screen }) {
   );
 }
 
+function TestimonialsCarousel() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-sans opacity-50 px-1">Истории клиентов</p>
+      <div
+        className="flex overflow-x-auto gap-3 pb-1 snap-x snap-mandatory scrollbar-hide"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        onScroll={(e) => {
+          const el = e.currentTarget as HTMLDivElement;
+          const index = Math.round(el.scrollLeft / el.offsetWidth);
+          setActiveIndex(index);
+        }}
+      >
+        {TESTIMONIALS.map((t) => (
+          <div
+            key={t.id}
+            className="min-w-full snap-start px-4 py-3 bg-[#5A5A40]/5 rounded-xl border-l-2 border-[#5A5A40]/30"
+          >
+            <p className="text-xs font-sans text-[#5A5A40] font-medium mb-1 opacity-70">{t.topic}</p>
+            <p className="text-sm font-sans opacity-70 italic leading-relaxed">{t.text}</p>
+            <p className="text-xs font-sans opacity-50 mt-2">— {t.author}</p>
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-center gap-1.5 pt-0.5">
+        {TESTIMONIALS.map((_, i) => (
+          <div
+            key={i}
+            className="rounded-full transition-all duration-200"
+            style={{
+              width: i === activeIndex ? 16 : 6,
+              height: 6,
+              backgroundColor: i === activeIndex ? '#5A5A40' : '#5A5A40',
+              opacity: i === activeIndex ? 1 : 0.25,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function SpecialistCard() {
   return (
     <div className="space-y-3">
@@ -132,11 +176,7 @@ function SpecialistCard() {
           <p className="text-xs font-sans text-[#5A5A40] font-medium">{SPECIALIST.fact}</p>
         </div>
       </div>
-      <div className="px-4 py-3 bg-[#5A5A40]/5 rounded-xl border-l-2 border-[#5A5A40]/30">
-        <p className="text-sm font-sans opacity-70 italic leading-relaxed">
-          {SPECIALIST.testimonial}
-        </p>
-      </div>
+      <TestimonialsCarousel />
     </div>
   );
 }
