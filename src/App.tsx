@@ -526,7 +526,7 @@ export default function App() {
                   </div>
                   {SPECIALIST.slotsLeft > 0 && (
                     <p className="text-xs font-sans text-amber-700 bg-amber-50 px-3 py-2 rounded-lg font-medium">
-                      Осталось {SPECIALIST.slotsLeft} {SPECIALIST.slotsLeft === 1 ? 'место' : 'места'} на этой неделе
+                      Осталось {SPECIALIST.slotsLeft} {SPECIALIST.slotsLeft === 1 ? 'место' : SPECIALIST.slotsLeft <= 4 ? 'места' : 'мест'} на этой неделе
                     </p>
                   )}
                 </div>
