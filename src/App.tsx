@@ -17,6 +17,8 @@ import {
   Search,
   Share2,
   CheckCircle2,
+  Home,
+  MessageCircle,
 } from 'lucide-react';
 import { TOPICS, SPECIALIST, SOCIAL_PROOF, OFFER, TESTIMONIALS, Topic } from './constants';
 
@@ -181,6 +183,49 @@ function SpecialistCard() {
   );
 }
 
+function BottomNav({
+  screen,
+  onStart,
+  onWrite,
+  onShare,
+}: {
+  screen: Screen;
+  onStart: () => void;
+  onWrite: () => void;
+  onShare: () => void;
+}) {
+  const items = [
+    { label: 'Начать', icon: Home, action: onStart, active: screen === 'intro' || screen === 'welcome' },
+    { label: 'Написать', icon: MessageCircle, action: onWrite, active: false },
+    { label: 'Поделиться', icon: Share2, action: onShare, active: false },
+  ];
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#f5f5f0]/95 backdrop-blur-sm border-t border-black/5">
+      <div className="max-w-md mx-auto flex">
+        {items.map((item) => (
+          <button
+            key={item.label}
+            onClick={item.action}
+            className="flex-1 flex flex-col items-center gap-1 py-3 transition-all"
+          >
+            <item.icon
+              className="w-5 h-5 transition-all"
+              style={{ color: item.active ? '#5A5A40' : '#1a1a1a', opacity: item.active ? 1 : 0.35 }}
+            />
+            <span
+              className="text-[10px] font-sans font-medium tracking-wide"
+              style={{ color: item.active ? '#5A5A40' : '#1a1a1a', opacity: item.active ? 1 : 0.35 }}
+            >
+              {item.label}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [screen, setScreen] = useState<Screen>('intro');
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
@@ -250,12 +295,21 @@ export default function App() {
     }
   };
 
+  const handleWrite = () => {
+    const url = `https://t.me/${SPECIALIST.username}`;
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.openTelegramLink(url);
+    } else {
+      window.open(url, '_blank');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#f5f5f0] text-[#1a1a1a] font-serif">
       <AnimatePresence>
         {showOffer && <OfferModal onClose={handleCloseOffer} />}
       </AnimatePresence>
-      <div className="max-w-md mx-auto px-6 py-8 flex flex-col min-h-screen">
+      <div className="max-w-md mx-auto px-6 py-8 flex flex-col min-h-screen pb-24">
 
         {/* Header */}
         <header className="mb-6 flex items-center justify-between">
@@ -561,6 +615,13 @@ export default function App() {
           </p>
         </footer>
       </div>
+
+      <BottomNav
+        screen={screen}
+        onStart={() => setScreen('intro')}
+        onWrite={handleWrite}
+        onShare={handleShare}
+      />
     </div>
   );
 }
