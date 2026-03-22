@@ -55,8 +55,8 @@
 Ты выбрал(а) тему: [симптом].
 Давай начнём с короткого созвона/переписки — расскажи подробнее...
 ```
-- [ ] Написать 6 версий скрипта под каждый симптом (energy, sleep, digestion, weight, stress, other)
-- [ ] Создать файл `scripts/specialist-reply.md` и сохранить туда скрипты
+- [x] Написать 6 версий скрипта под каждый симптом (energy, sleep, digestion, weight, stress, other)
+- [x] Создать файл `scripts/specialist-reply.md` и сохранить туда скрипты
 
 ### Реальные данные в соцдоказательствах
 Фейковые цифры подрывают доверие — особенно в wellness-сообществе, где всё проверяется:
@@ -109,10 +109,10 @@ VIP (29 000₽+): Полное сопровождение 3–6 месяцев
   - Метрики: `app_opened → symptom_selected → explanation_completed → specialist_chat_opened`
   - Главная метрика успеха: **CTA click rate** (сколько % дошедших до action нажали кнопку)
   - Дополнительно: `offer_modal_shown`, `offer_modal_accepted`, `offer_modal_skipped`
-- [ ] Удалить неиспользуемый `NEXT_STEPS` из `constants.ts` (артефакт удалённого экрана selection)
+- [x] Удалить неиспользуемый `NEXT_STEPS` из `constants.ts` (артефакт удалённого экрана selection)
 - [ ] OG-теги для красивого превью ссылки при шаринге
 - [ ] Privacy Policy (Telegram может потребовать для работы с данными о здоровье)
-- [ ] Удалить неиспользуемые зависимости из `package.json`: `express`, `better-sqlite3`, `@google/genai`, `dotenv`
+- [x] Удалить неиспользуемые зависимости из `package.json`: `express`, `better-sqlite3`, `@google/genai`, `dotenv`
 
 ---
 

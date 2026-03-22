@@ -86,9 +86,11 @@ npm run dev            # → http://localhost:3000
 
 **.env переменные:**
 ```
-TELEGRAM_BOT_TOKEN=...  # не используется во фронтенде (SPA без бэкенда), хранится в Vercel
-GEMINI_API_KEY=...      # зарезервировано, не используется
+TELEGRAM_BOT_TOKEN=...          # не используется во фронтенде (SPA без бэкенда), хранится в Vercel
 APP_URL=http://localhost:3000
+SUPABASE_URL=https://...        # Phase 2 — пока не используется в коде
+SUPABASE_ANON_KEY=...           # Phase 2 — публичный ключ (Publishable key)
+SUPABASE_SERVICE_ROLE_KEY=...   # Phase 2 — секретный, только для serverless функций
 ```
 
 **Полезные команды:**

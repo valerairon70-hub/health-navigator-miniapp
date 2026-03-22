@@ -37,8 +37,10 @@ src/
 | Переменная | Описание |
 |---|---|
 | `TELEGRAM_BOT_TOKEN` | Токен бота из @BotFather — хранится в Vercel, в коде не используется (фронтенд-приложение) |
-| `GEMINI_API_KEY` | Зарезервировано, пока не используется |
 | `APP_URL` | URL приложения (`http://localhost:3000` локально, `https://mvpextracted.vercel.app` в продакшне) |
+| `SUPABASE_URL` | URL проекта Supabase — нужен в Phase 2 |
+| `SUPABASE_ANON_KEY` | Публичный ключ Supabase (Publishable key) — для фронтенда |
+| `SUPABASE_SERVICE_ROLE_KEY` | Секретный ключ Supabase — только для серверных функций, никому не показывать |
 
 ---
 
@@ -61,4 +63,6 @@ git push origin main
 | `brief.md` | Полное техзадание: экраны, дизайн-система, константы |
 | `PLAN.md` | Roadmap и приоритеты задач |
 | `TESTING.md` | Руководство тестировщика — запуск и все тест-кейсы |
-| `CLAUDE.md` | Правила работы с кодом |
+| `CLAUDE.md` | Правила работы с кодом и контекст проекта |
+| `BACKEND_PLAN.md` | Архитектурный план Phase 1–3 (white-label платформа) |
+| `MLM_APP_BRIEF.md` | ИКР и промт для white-label версии (для дистрибьюторов) |
