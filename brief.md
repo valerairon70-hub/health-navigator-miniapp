@@ -48,8 +48,11 @@
 
 **Переменные окружения (`.env`):**
 ```
-GEMINI_API_KEY=  # зарезервировано, пока не используется
+TELEGRAM_BOT_TOKEN=  # токен бота — хранится в Vercel, во фронтенде не используется
 APP_URL=https://mvpextracted.vercel.app
+SUPABASE_URL=        # Phase 2 — пока не используется в коде
+SUPABASE_ANON_KEY=   # Phase 2 — публичный ключ
+SUPABASE_SERVICE_ROLE_KEY=  # Phase 2 — секретный, только для serverless функций
 ```
 
 ---
@@ -323,7 +326,7 @@ intro → welcome → explanation → action → thankyou
 ### Глобальные элементы
 
 #### OfferModal (всплывающее окно)
-- Показывается **один раз** — через 1.5 секунды после открытия приложения
+- Показывается **один раз** — через 1 секунду после того как пользователь выбрал симптом (экран `explanation`)
 - После закрытия: `localStorage.setItem('offer_shown_v1', '1')` — не показывается повторно
 - Содержимое (из `OFFER` в `constants.ts`):
   - Эмодзи-иконка + заголовок: «Бесплатная 5-минутная консультация»
@@ -410,11 +413,10 @@ tg.HapticFeedback.notificationOccurred('success'); // при нажатии фи
 | `SPECIALIST.botUsername` | Username бота (для шаринга) | ✓ my_health_navigator_bot |
 | `SPECIALIST.fact` | Факт о специалисте | ✓ «200+ клиентов» — обновить когда изменится |
 | `SPECIALIST.shareText` | Текст при шаринге навигатора | ✓ установлен |
-| `SPECIALIST.testimonial` | ~~Отзыв клиента~~ | ⚠️ **Не используется в UI** — мёртвый код. Карусель берёт отзывы из массива `TESTIMONIALS`. Можно удалить |
-| `SPECIALIST.slotsLeft` | Осталось мест | Сейчас: `3` (захардкожено). Обновлять вручную или убрать |
-| `SOCIAL_PROOF.count` | Число прошедших | Сейчас: `340` (захардкожено). Убрать или заменить реальной цифрой |
+| `SPECIALIST.slotsLeft` | Осталось мест | Сейчас: `3`. Обновлять вручную перед кампанией или убрать |
+| `SOCIAL_PROOF.count` | Число прошедших | Сейчас: `0` → скрыт автоматически. Показывается только если `> 0` |
 | `OFFER.*` | Данные OfferModal | ✓ настроено |
-| `NEXT_STEPS` | Массив форматов (review/tracker/question) | ⚠️ Не используется в UI — удалить |
+| `TESTIMONIALS` | 5 отзывов в карусели | Временные placeholder'ы — заменить реальными по мере появления |
 
 ### Производительность и совместимость
 - HTTPS обязателен (Vercel обеспечивает автоматически)
@@ -469,7 +471,7 @@ posthog.capture('symptom_selected', { symptom: 'energy' });
 - [ ] Добавить `tg.BackButton` (нативная кнопка «назад» Telegram)
 - [ ] Добавить `tg.HapticFeedback` (вибрация при выборе симптома и нажатии CTA)
 - [ ] Подключить аналитику (PostHog или Яндекс Метрика)
-- [ ] Удалить неиспользуемый `NEXT_STEPS` из `constants.ts`
+- [x] Удалить неиспользуемый `NEXT_STEPS` из `constants.ts`
 
 ### 🟢 Следующий этап
 - [ ] Переработать тексты объяснений в нарратив от первого лица
@@ -482,7 +484,7 @@ posthog.capture('symptom_selected', { symptom: 'energy' });
 - [ ] White label: настройка под другого специалиста через `constants.ts`
 - [ ] Dashboard специалиста: сколько прошли, какие темы выбирают
 - [ ] Privacy Policy (Telegram может потребовать для работы с health-данными)
-- [ ] Скрипт первого ответа специалиста (шаблоны под каждый симптом)
+- [x] Скрипт первого ответа специалиста (шаблоны под каждый симптом) — см. `scripts/specialist-reply.md`
 
 ---
 
@@ -499,12 +501,16 @@ mvp_extracted/
 │   ├── specialist.png   # Фото Валерия Созанова
 │   ├── icon.png         # Иконка бота
 │   └── welcome-banner.svg # Баннер для BotFather (640×360)
-├── index.html           # Мета-теги + Telegram SDK
+├── scripts/
+│   └── specialist-reply.md  # Скрипты первого ответа специалиста (6 тем)
+├── index.html           # Мета-теги + Telegram SDK (lang="ru")
 ├── brief.md             # Этот файл — главный документ проекта
 ├── project.md           # Описание проекта
 ├── PLAN.md              # Roadmap и задачи
 ├── TESTING.md           # Руководство тестировщика
-└── CLAUDE.md            # Правила работы с кодом
+├── BACKEND_PLAN.md      # Архитектурный план Phase 1–3 (white-label платформа)
+├── MLM_APP_BRIEF.md     # ИКР и промт для white-label версии
+└── CLAUDE.md            # Правила работы с кодом и контекст проекта
 ```
 
 ---

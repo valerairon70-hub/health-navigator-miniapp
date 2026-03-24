@@ -50,10 +50,6 @@ intro → welcome → explanation → action → thankyou
 | `TESTIMONIALS` | 5 отзывов в карусели | Временные placeholder'ы |
 | `OFFER` | Содержимое OfferModal | `storageKey` не менять — сбросит флаг у всех |
 
-**Мёртвый код (не трогать, запланировано удалить в PLAN.md):**
-- `NEXT_STEPS` в constants.ts (строки 47–63) — артефакт удалённого экрана selection
-- `SPECIALIST.testimonial` в constants.ts — поле есть, но в App.tsx не используется (карусель берёт из `TESTIMONIALS`)
-
 ---
 
 ## Telegram SDK — как работает
