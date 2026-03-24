@@ -233,6 +233,7 @@ export default function App() {
   const [userName, setUserName] = useState<string>('');
   const [customText, setCustomText] = useState<string>('');
   const [showCustomInput, setShowCustomInput] = useState<boolean>(false);
+  const [expandedArea, setExpandedArea] = useState<string | null>(null);
 
   useEffect(() => {
     if (window.Telegram?.WebApp) {
@@ -522,14 +523,29 @@ export default function App() {
                     На что стоит обратить внимание:
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
-                    {selectedTopic.focusAreas.map((area, i) => (
-                      <div
-                        key={i}
-                        className="p-3 bg-white rounded-xl border border-black/5 text-sm font-sans"
-                      >
-                        {area}
-                      </div>
-                    ))}
+                    {selectedTopic.focusAreas.map((area, i) => {
+                      const isOpen = expandedArea === area.title;
+                      return (
+                        <div
+                          key={i}
+                          onClick={() => setExpandedArea(isOpen ? null : area.title)}
+                          className={`p-3 bg-white rounded-xl border text-sm font-sans cursor-pointer transition-all ${isOpen ? 'border-[#5A5A40]/30 col-span-2' : 'border-black/5'}`}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-medium">{area.title}</span>
+                            <ChevronRight
+                              className="w-3.5 h-3.5 shrink-0 opacity-30 transition-transform"
+                              style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
+                            />
+                          </div>
+                          {isOpen && (
+                            <p className="mt-2 text-xs opacity-60 leading-relaxed font-sans">
+                              {area.hint}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
