@@ -231,6 +231,8 @@ export default function App() {
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [showOffer, setShowOffer] = useState(false);
   const [userName, setUserName] = useState<string>('');
+  const [customText, setCustomText] = useState<string>('');
+  const [showCustomInput, setShowCustomInput] = useState<boolean>(false);
 
   useEffect(() => {
     if (window.Telegram?.WebApp) {
@@ -250,6 +252,20 @@ export default function App() {
 
   const handleTopicSelect = (topic: Topic) => {
     setSelectedTopic(topic);
+    if (topic.id === 'other') {
+      setShowCustomInput(true);
+      return;
+    }
+    setScreen('explanation');
+    const alreadyShown = localStorage.getItem(OFFER.storageKey);
+    if (!alreadyShown) {
+      setTimeout(() => setShowOffer(true), 1000);
+    }
+  };
+
+  const handleCustomSubmit = () => {
+    if (!customText.trim()) return;
+    setShowCustomInput(false);
     setScreen('explanation');
     const alreadyShown = localStorage.getItem(OFFER.storageKey);
     if (!alreadyShown) {
@@ -258,6 +274,10 @@ export default function App() {
   };
 
   const goBack = () => {
+    if (showCustomInput) {
+      setShowCustomInput(false);
+      return;
+    }
     if (screen === 'welcome') setScreen('intro');
     if (screen === 'explanation') setScreen('welcome');
     if (screen === 'action') setScreen('explanation');
@@ -275,6 +295,9 @@ export default function App() {
   };
 
   const handleFinalAction = () => {
+    if (selectedTopic?.id === 'other' && customText.trim()) {
+      try { navigator.clipboard.writeText(customText); } catch {}
+    }
     if (window.Telegram?.WebApp) {
       window.Telegram.WebApp.openTelegramLink(
         `https://t.me/${SPECIALIST.username}`
@@ -392,7 +415,7 @@ export default function App() {
             )}
 
             {/* Screen 1: Topic Selection */}
-            {screen === 'welcome' && (
+            {screen === 'welcome' && !showCustomInput && (
               <motion.div
                 key="welcome"
                 initial={{ opacity: 0, y: 20 }}
@@ -429,6 +452,46 @@ export default function App() {
                     </button>
                   ))}
                 </div>
+              </motion.div>
+            )}
+
+            {/* Screen 1b: Custom input */}
+            {screen === 'welcome' && showCustomInput && (
+              <motion.div
+                key="custom-input"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-6"
+              >
+                <div className="space-y-2">
+                  <p className="text-xs font-sans font-bold uppercase tracking-widest opacity-40">
+                    Шаг 1 из 3
+                  </p>
+                  <h2 className="text-3xl font-light leading-tight">
+                    Опиши своё состояние
+                  </h2>
+                  <p className="text-sm font-sans opacity-60">
+                    Напиши своими словами — что тебя беспокоит прямо сейчас
+                  </p>
+                </div>
+
+                <textarea
+                  autoFocus
+                  value={customText}
+                  onChange={(e) => setCustomText(e.target.value)}
+                  placeholder="Например: последние 2 месяца постоянно устаю, даже после сна нет сил. Плюс раздражительность и тяжесть после еды..."
+                  className="w-full h-40 p-4 bg-white rounded-2xl border border-black/10 text-sm font-sans leading-relaxed resize-none focus:outline-none focus:border-[#5A5A40]/40 placeholder:opacity-40"
+                />
+
+                <button
+                  onClick={handleCustomSubmit}
+                  disabled={!customText.trim()}
+                  className="w-full py-5 bg-[#5A5A40] text-white rounded-2xl font-sans font-bold text-sm shadow-lg hover:bg-[#4a4a35] transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Продолжить
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </motion.div>
             )}
 
@@ -469,6 +532,13 @@ export default function App() {
                     ))}
                   </div>
                 </div>
+
+                {selectedTopic.id === 'other' && customText.trim() && (
+                  <div className="p-4 bg-white rounded-xl border border-black/5">
+                    <p className="text-xs font-sans opacity-50 mb-2">Твой запрос:</p>
+                    <p className="text-sm font-sans opacity-80 italic leading-relaxed">«{customText}»</p>
+                  </div>
+                )}
 
                 <div className="p-6 bg-[#5A5A40] text-white rounded-3xl space-y-4 shadow-xl">
                   <p className="text-base leading-relaxed opacity-90">
@@ -567,8 +637,16 @@ export default function App() {
                     Отлично!
                   </h2>
                   <p className="text-base font-sans opacity-60 leading-relaxed">
-                    Валерий получил твой запрос и ответит в Telegram в течение нескольких часов в рабочие дни.
+                    {selectedTopic?.id === 'other' && customText.trim()
+                      ? 'Твой запрос скопирован в буфер. Вставь его в чат с Валерием — он ответит в течение нескольких часов.'
+                      : 'Валерий получил твой запрос и ответит в Telegram в течение нескольких часов в рабочие дни.'}
                   </p>
+                  {selectedTopic?.id === 'other' && customText.trim() && (
+                    <div className="mt-3 p-3 bg-[#5A5A40]/5 rounded-xl">
+                      <p className="text-xs font-sans opacity-50 mb-1">Скопировано:</p>
+                      <p className="text-sm font-sans opacity-70 italic">«{customText}»</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="w-full p-5 bg-white rounded-2xl border border-black/5 space-y-3">
